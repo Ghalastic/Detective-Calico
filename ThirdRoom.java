@@ -48,15 +48,15 @@ public class ThirdRoom extends Application {
     	b.setFont(new Font("Arail",15));
     	pane.getChildren().add(b);
     	final String[] puzzle = {
-   		        "387491625",
-   		        "241568379",
-   		        "569327418",
-   		        "758619234",
-   		        "123784596",
-   		        "496253187",
-   		        "934176852",
-   		        "675832941",
-   		        "81--45---"
+	          "--74916-5",
+	          "2---6-3-9",
+	          "-----7-1-",
+	          "-586----4",
+	          "--3----9-",
+	          "--62--187",
+	          "9-4-7---2",
+	          "67-83----",
+	          "81--45---"
    		    };
    	final String[] solution = {
    		        "387491625",
@@ -131,7 +131,7 @@ public class ThirdRoom extends Application {
     	    					score++;
     	    					scoreText.setText("Score= "+String.valueOf(score));
     	    				}}
-    					  if(score==5) {
+    					  if(score==46) {
     			       		   showWinScene(firstPage);
     			    		  }
     					  
@@ -208,4 +208,5 @@ private void showWinScene(Stage stage) {
 	}
 
 }
+
 
