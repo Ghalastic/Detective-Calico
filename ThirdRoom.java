@@ -22,6 +22,7 @@ public class ThirdRoom extends Application {
 	 private int score=0;
     public void start(Stage firstPage) {
     	firstPage.setTitle("Sudoku");
+		firstPage.setResizable(false);
     	Pane pane=new Pane();
     	Scene scene1=new Scene(pane,600,650,Color.RED);
     	
@@ -207,3 +208,4 @@ private void showWinScene(Stage stage) {
 	}
 
 }
+
