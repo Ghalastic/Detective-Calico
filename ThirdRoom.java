@@ -28,10 +28,10 @@ public class ThirdRoom extends Application {
     		);
     	
         ImageView cat = new ImageView("/images/walkingright2.png");
-    	cat.setFitWidth(150);
-    	cat.setFitHeight(200);
-    	cat.setLayoutX(400);   // موقع الصورة
-    	cat.setLayoutY(500);
+    	cat.setFitWidth(300);
+    	cat.setFitHeight(500);
+    	cat.setLayoutX(250);   
+    	cat.setLayoutY(300);
     	background.getChildren().add(cat);
     	
     
@@ -63,15 +63,15 @@ public class ThirdRoom extends Application {
     	
     	
     	final String[] puzzle = {
-   		        "387491625",
-   		        "241568379",
-   		        "569327418",
-   		        "758619234",
-   		        "123784596",
-   		        "496253187",
-   		        "934176852",
-   		        "675832941",
-   		        "81--45---"
+	        "--74916-5",
+	        "2---6-3-9",
+	        "-----7-1-",
+	        "-586----4",
+	        "--3----9-",
+	        "--62--187",
+	        "9-4-7---2",
+	        "67-83----",
+	        "81--45---"
    		    };
    	final String[] solution = {
    		        "387491625",
@@ -144,8 +144,9 @@ public class ThirdRoom extends Application {
     	    					numSelected=null;
     	    					score++;
     	    					scoreText.setText("Score= "+String.valueOf(score));
-    	    				}}
-    					  if(score==5) {
+    	    				}else numSeleceted=null;
+						  }
+    					  if(score==46) {
     						  Pane pane3=new Pane();
    						   
    						   Label Hint3=new Label("\t      Great goob\n Hint3: ");
@@ -238,5 +239,6 @@ public class ThirdRoom extends Application {
 	}
 
 }
+
 
 
