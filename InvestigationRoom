@@ -1,0 +1,309 @@
+package application;
+
+import javafx.animation.*;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+public class game extends Application {
+
+    final int TILE = 32;
+
+    Image stationWall1, stationWall2, stationWall3,floor, wall, bars, door, table;
+    Image npc1, npc2, npc3;
+
+    Image walkFront1, walkFront2;
+    Image walkBack1, walkBack2;
+    Image walkLeft1, walkLeft2;
+    Image walkRight1, walkRight2;
+
+    Image currentPlayerFrame;
+    
+    Image bigSailor   = new Image("file:/C:/Users/L/Desktop/game/npc/SeagullPortrait.jpg");
+    Image bigChief    = new Image("file:/C:/Users/L/Desktop/game/npc/WolfPortrait.jpg");
+    Image bigHistorian = new Image("file:/C:/Users/L/Desktop/game/npc/OwlPortrait.jpg");
+
+    double px = 300, py = 380;
+    double speed = 2.2;
+    int animCounter = 0;
+
+    boolean up, down, left, right, interact;
+
+    boolean dialogueActive = false;
+    String[] lines = new String[3];
+    int lineIndex = 0;
+    String typed = "";
+    double dialogueOpacity = 0;
+    Image dialoguePortrait = null;
+    
+    int[][] map = {
+    		{10,10,10,10,10,10,10, 10,10,10,10,10,10, 10,10,10,10,10,10},
+    		{9,9,9,9,9,9,9, 9,9,9,9,9,9, 9,9,9,9,9,9},
+    		{8,8,8,8,8,8,8, 8,8,8,8,8,8, 8,8,8,8,8,8},
+    		
+    	    {1,1,1,1,1,1,1, 1,1,1,1,1,1, 1,1,1,1,1,1},
+
+    	    {1,0,0,5,0,0,1, 0,0,6,0,0,1, 0,0,7,0,0,1,},
+
+    	    {1,0,0,4,0,0,1, 0,0,4,0,0,1, 0,0,4,0,0,1},
+
+    	    {1,0,0,0,0,0,1, 0,0,0,0,0,1, 0,0,0,0,0,1},
+
+    	    {1,1,2,1,1,1,1,   1,1,2,1,1,1,   1,1,2,1,1,1},
+
+    	    // FIXED — now 19 columns each
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0},
+    	    {0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0}
+    	};
+
+    @Override
+    public void start(Stage stage) {
+
+        // ---- LOAD IMAGES (KEPT EXACTLY AS YOUR PATHS) ----
+    	stationWall1 = new Image("file:/C:/Users/L/Desktop/game/background/stationWall1.png");
+    	stationWall2 = new Image("file:/C:/Users/L/Desktop/game/background/stationWall2.png");
+    	stationWall3 = new Image("file:/C:/Users/L/Desktop/game/background/stationWall3.png");
+    	
+        floor = new Image("file:/C:/Users/L/Desktop/game/background/stationtile.png");
+        wall  = new Image("file:/C:/Users/L/Desktop/game/background/cellWall.png");
+        bars  = new Image("file:/C:/Users/L/Desktop/game/background/cellBars.png");
+        door  = new Image("file:/C:/Users/L/Desktop/game/background/cellDoor.png");
+        table = new Image("file:/C:/Users/L/Desktop/game/background/cellTable.png");
+
+        npc1 = new Image("file:/C:/Users/L/Desktop/game/npc/SeagullSailor.png");
+        npc2 = new Image("file:/C:/Users/L/Desktop/game/npc/WolfSecurity.png");
+        npc3 = new Image("file:/C:/Users/L/Desktop/game/npc/OwlHistorian.png");
+
+        walkFront1 = new Image("file:/C:/Users/L/Desktop/game/player/walkingfront1.png");
+        walkFront2 = new Image("file:/C:/Users/L/Desktop/game/player/walkingfront2.png");
+        walkBack1  = new Image("file:/C:/Users/L/Desktop/game/player/walkingback1.png");
+        walkBack2  = new Image("file:/C:/Users/L/Desktop/game/player/walkingback2.png");
+        walkLeft1  = new Image("file:/C:/Users/L/Desktop/game/player/walkingleft1.png");
+        walkLeft2  = new Image("file:/C:/Users/L/Desktop/game/player/walkingleft2.png");
+        walkRight1 = new Image("file:/C:/Users/L/Desktop/game/player/walkingright1.png");
+        walkRight2 = new Image("file:/C:/Users/L/Desktop/game/player/walkingright2.png");
+
+        currentPlayerFrame = walkFront1;
+
+        Canvas canvas = new Canvas(19 * TILE, 16 * TILE);
+        GraphicsContext g = canvas.getGraphicsContext2D();
+
+        Scene scene = new Scene(new StackPane(canvas), 19 * TILE, 16 * TILE);
+
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.W) up = true;
+            if (e.getCode() == KeyCode.S) down = true;
+            if (e.getCode() == KeyCode.A) left = true;
+            if (e.getCode() == KeyCode.D) right = true;
+            if (e.getCode() == KeyCode.E) interact = true;
+        });
+        scene.setOnKeyReleased(e -> {
+            if (e.getCode() == KeyCode.W) up = false;
+            if (e.getCode() == KeyCode.S) down = false;
+            if (e.getCode() == KeyCode.A) left = false;
+            if (e.getCode() == KeyCode.D) right = false;
+            if (e.getCode() == KeyCode.E) interact = false;
+        });
+
+        stage.setTitle("Police Cells");
+        stage.setScene(scene);
+        stage.show();
+
+        new AnimationTimer() {
+            public void handle(long now) {
+                update();
+                render(g);
+            }
+        }.start();
+    }
+    // UPDATE LOOP
+    void update() {
+
+        double oldX = px, oldY = py;
+
+        if (up)    { py -= speed; animateWalk("up"); }
+        if (down)  { py += speed; animateWalk("down"); }
+        if (left)  { px -= speed; animateWalk("left"); }
+        if (right) { px += speed; animateWalk("right"); }
+
+        if (collides(px, py)) {
+            px = oldX;
+            py = oldY;
+        }
+
+        if (interact) {
+            interact = false;
+            checkInteract();
+        }
+    }
+
+    boolean collides(double x, double y) {
+
+        int tx = (int)(x / TILE);
+        int ty = (int)(y / TILE);
+
+        if (tx < 0 || ty < 0 || ty >= map.length || tx >= map[0].length)
+            return true;
+
+        int tile = map[ty][tx];
+
+        return (tile == 1 || tile == 2 || tile == 4 || tile == 8 || tile == 9 || tile == 10); // wall or closed door
+    }
+    // INTERACTION
+    void checkInteract() {
+
+        // If dialogue active → control dialogue only
+        if (dialogueActive) {
+            if (typed.length() < lines[lineIndex].length()) {
+                typed = lines[lineIndex]; // instantly finish
+            } else {
+                lineIndex++;
+                if (lineIndex >= 3) {
+                    dialogueActive = false;
+                    typed = "";
+                } else {
+                    typed = "";
+                    typeNextChar();
+                }
+            }
+            return;
+        }
+
+        int tx = (int)(px / TILE);
+        int ty = (int)(py / TILE);
+
+        // scan 2 tiles around player
+        for (int yy = ty - 2; yy <= ty + 2; yy++) {
+            for (int xx = tx - 2; xx <= tx + 2; xx++) {
+
+                // 🟢 FIXED: safe bounds check
+                if (xx < 0 || xx >= map[0].length) continue;
+                if (yy < 0 || yy >= map.length) continue;
+
+                int tile = map[yy][xx];
+
+                // door toggle
+                if (tile == 2) { map[yy][xx] = 3; return; }
+                if (tile == 3) { map[yy][xx] = 2; return; }
+
+                // npc
+                if (tile >= 5 && tile <= 7) {
+                    startDialogue(tile);
+                    return;
+                }
+            }
+        }
+    }
+    // DIALOGUE SYSTEM
+    void startDialogue(int npc) {
+
+        dialogueActive = true;
+        lineIndex = 0;
+        typed = "";
+
+        if (npc == 5) {
+            lines[0] = "Sailor: \nAhoy there! I’m Captain Gullis,\nretired sailor and part-time museum guard.";
+            lines[1] = "Sailor: \nThe artifact vanished, I was outside checking \nthe tide charts. Haven’t left my post otherwise.";
+            lines[2] = "Sailor: \nStrangest thing though… I remember hearing\na tiny jingle, like a collar bell, but maybe that \nwas just my imagination.";
+            dialoguePortrait = bigSailor;
+        }
+        if (npc == 6) {
+            lines[0] = "Chief: \nI’m Chief Ironfang.\nI oversee all security protocols in this facility.";
+            lines[1] = "Chief: \nDuring the theft, I was reviewing access \nlogs. Not a single breach registered… \nmeaning the thief used proper clearance.";
+            lines[2] = "Chief: \nThe only thing the cameras picked up was a \nsmall, fast shape slipping by… probably just \na stray cat chasing dust.";
+            dialoguePortrait = bigChief;
+        }
+        if (npc == 7) {
+            lines[0] = "Historian: \nI am Arctavian, curator of forgotten relics \nand keeper of old truths";
+            lines[1] = "Historian: \nAt the moment of the disappearance, I was in \nthe archives translating ancient inscriptions.\nThe old inkstains on my feathers can verify that.";
+            lines[2] = "Historian: \nThe relic only stirs for gentle paws… creatures \nguided more by instinct than ambition.";
+            dialoguePortrait = bigHistorian;
+        }
+        typeNextChar();
+    }
+
+    void typeNextChar() {
+        if (!dialogueActive) return;
+
+        if (typed.length() < lines[lineIndex].length()) {
+
+            typed = lines[lineIndex].substring(0, typed.length() + 1);
+
+            PauseTransition p = new PauseTransition(Duration.millis(30));
+            p.setOnFinished(e -> typeNextChar());
+            p.play();
+        }
+    }
+    // RENDERING
+    void render(GraphicsContext g) {
+
+        g.setFill(Color.BLACK);
+        g.fillRect(0, 0, 2000, 2000);
+
+        // DRAW MAP
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[0].length; x++) {
+
+                Image img = switch (map[y][x]) {
+                    case 1 -> wall;
+                    case 2 -> bars;
+                    case 3 -> door;
+                    case 4 -> table;
+                    case 5 -> npc1;
+                    case 6 -> npc2;
+                    case 7 -> npc3;
+                    case 8 -> stationWall1;
+                    case 9 -> stationWall2;
+                    case 10 -> stationWall3;
+                    default -> floor;
+                };
+
+                g.drawImage(img, x * TILE, y * TILE, TILE, TILE);
+            }
+        }
+
+        // DRAW PLAYER
+        g.drawImage(currentPlayerFrame, px - 64/2, py - 64/2, 64, 64);
+
+        // DIALOGUE BOX
+        if (dialogueActive) {
+
+            g.setFill(Color.rgb(120, 100, 75, 0.80));
+            g.fillRect(32,10*32 , 17*32, 5*32);
+            
+            g.setFill(Color.BISQUE);
+            g.setFont(new Font(18));
+            g.fillText(typed, 64, 13*32-64);
+            g.drawImage(dialoguePortrait, 15*34-64, 10*34, 96, 96);
+        }
+    }
+
+    void animateWalk(String dir) {
+        animCounter++;
+
+        if (dir.equals("up"))
+            currentPlayerFrame = (animCounter % 20 < 10 ? walkBack1 : walkBack2);
+        if (dir.equals("down"))
+            currentPlayerFrame = (animCounter % 20 < 10 ? walkFront1 : walkFront2);
+        if (dir.equals("left"))
+            currentPlayerFrame = (animCounter % 20 < 10 ? walkLeft1 : walkLeft2);
+        if (dir.equals("right"))
+            currentPlayerFrame = (animCounter % 20 < 10 ? walkRight1 : walkRight2);
+    }
+    
+
+    public static void main(String[] args) { launch(); }
+}
