@@ -1,0 +1,368 @@
+package application;
+
+import java.util.Random;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+
+public class FirstRoom extends Application {
+    
+    // Variables for the selection system
+    int[] imageCounts = new int[7];
+    private String[] objectNames = {"Cup", "Mouse", "File", "Flowers", "Handcuffs", "Walkie Talkie", "Peaked Cap"};
+    private ToggleGroup toggleGroup;
+    private Label resultLabel;
+    private int score;
+ 
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("First Room");
+        primaryStage.setFullScreenExitHint("");
+        primaryStage.setFullScreen(true);
+
+        // STAGE 1: INTRO SCENE
+        showIntroScene(primaryStage);
+    }
+
+    // STAGE 1: INTRO SCENE - Game Description
+    private void showIntroScene(Stage primaryStage) {
+        Pane background = new Pane();
+        background.setStyle(
+            "-fx-background-image: url('file:C:/Users/janaa/Downloads/Img/thirdroom.png'); " +
+            "-fx-background-size: cover;"
+        );
+
+        Pane pane = new Pane();
+        addImageAtPosition(pane, "file:C:/Users/janaa/Downloads/Img/calicobacks'.png", 250, 400, 250, 400);
+        
+        Label title = new Label("Welcome to the First Room");
+        title.setLayoutX(400);
+        title.setLayoutY(80);
+        title.setFont(Font.font("Century Gothic", FontWeight.BOLD, 30));
+        title.setTextFill(Color.WHITE);
+        pane.getChildren().add(title);
+        
+        Label rule = new Label("In this room, you'll find various objects scattered around.\n" +
+                              "Your task is to identify which object appears the MOST times.\n\n" +
+                              "Explore the room by dragging objects around to count them.\n" +
+                              "Then select the object you think appears most frequently.");
+        rule.setLayoutX(350);
+        rule.setLayoutY(250);
+        rule.setFont(Font.font("Century Gothic", 20));
+        rule.setTextFill(Color.WHITE);
+        pane.getChildren().add(rule);
+        
+        Button startButton = new Button("Start Game");
+        startButton.setLayoutX(600);
+        startButton.setLayoutY(450);
+        startButton.setFont(Font.font("Arial", 15));
+        pane.getChildren().add(startButton);
+        
+        startButton.setOnAction(e -> {
+            // STAGE 2: GAME SCENE
+            showGameScene(primaryStage);
+        });
+        
+        StackPane root = new StackPane();
+        root.getChildren().addAll(background, pane);
+        
+        Scene introScene = new Scene(root, 800, 650);
+        primaryStage.setScene(introScene);
+        primaryStage.show();
+    }
+
+    // STAGE 2: GAME SCENE 
+    private void showGameScene(Stage primaryStage) {
+    	// BorderPane is used to separate game area and selection panel
+        BorderPane mainLayout = new BorderPane();
+        
+        // setting the game area in the center of the main layout
+        Pane gameArea = createGameArea();
+        mainLayout.setCenter(gameArea);
+        
+        // Adding selection panel at bottom 
+        HBox selectionPanel = createSelectionPanel(primaryStage);
+        mainLayout.setBottom(selectionPanel);
+        
+        // Create game scene
+        Scene gameScene = new Scene(mainLayout, 1100, 650);
+        
+        primaryStage.setScene(gameScene);
+        primaryStage.setFullScreen(true); // Set full screen after setting scene
+        primaryStage.show();
+        
+        addImageAtPosition(gameArea, "file:C:/Users/janaa/Downloads/Img/calicobacks'.png", 1000, 400, 200, 200);
+        
+        // Generate counts and create images
+        generateRandomCounts();
+        createDistributedImages(gameArea);
+    }
+
+    // STAGE 3: OUTRO SCENE - Hint Display if Winning
+    private void showOutroScene(Stage primaryStage) {
+        Pane background = new Pane();
+        background.setStyle(
+            "-fx-background-image: url('file:C:/Users/janaa/Downloads/Img/outroImg.jpg'); " +
+            "-fx-background-size: cover;"
+        );
+
+        Pane pane = new Pane();
+        
+        Label hint = new Label("Congratulations! You found the most common object!\n\n" +
+                              "Hint 1: ");
+        
+        hint.setLayoutX(350);
+        hint.setLayoutY(200);
+        hint.setFont(Font.font("Century Gothic", FontWeight.BOLD, 20));
+        hint.setTextFill(Color.WHITE);
+        pane.getChildren().add(hint);
+        
+        Button NextRoomButton = new Button("Next Room");
+        NextRoomButton.setLayoutX(880);
+        NextRoomButton.setLayoutY(450);
+        NextRoomButton.setFont(Font.font("Arial", 15));
+        pane.getChildren().add(NextRoomButton);
+        
+        NextRoomButton.setOnAction(e -> {
+            // Could go back to main menu or restart
+            showIntroScene(primaryStage);
+        });
+        
+        StackPane root = new StackPane();
+        root.getChildren().addAll(background, pane);
+        
+        Scene outroScene = new Scene(root, 800, 650);
+        primaryStage.setScene(outroScene);
+        primaryStage.setFullScreen(true); 
+        primaryStage.show();
+    }
+
+
+    //game area background and settings
+    private Pane createGameArea() {
+        // Load image
+        Image backGround = new Image("file:C:/Users/janaa/Downloads/Img/bg_room1.png");
+   
+        // Create ImageView and make it fill the entire area
+        ImageView imageView1 = new ImageView(backGround);
+        imageView1.setFitWidth(1300);
+        imageView1.setFitHeight(650);
+        imageView1.setPreserveRatio(false);
+      
+  System.out.print(false);
+       
+        // Create layout
+        Pane root = new Pane();
+        root.getChildren().addAll(imageView1);
+        
+        return root;
+    }
+    
+    // Simple selection panel with radio buttons
+    private HBox createSelectionPanel(Stage primaryStage) {
+        HBox selectionPanel = new HBox(10);
+        selectionPanel.setPadding(new Insets(10));
+        selectionPanel.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #ccc; -fx-border-width: 1;");
+        selectionPanel.setAlignment(Pos.CENTER);
+        
+        // Instruction
+        Label instruction = new Label("MOST Object repeated is:");
+        instruction.setStyle("-fx-font-weight: bold;");
+        selectionPanel.getChildren().add(instruction);
+        
+        // Create toggle group for radio buttons
+        toggleGroup = new ToggleGroup();
+        
+        // Create radio buttons with images
+        for (int i = 0; i < 7; i++) {
+            VBox optionBox = new VBox(3);
+            optionBox.setAlignment(Pos.CENTER);
+            
+            // Small image
+            String imagePath = getImagePathForObject(i);
+            Image image = new Image(imagePath);
+            ImageView smallImage = new ImageView(image);
+            smallImage.setFitWidth(25);
+            smallImage.setFitHeight(25);
+            smallImage.setPreserveRatio(true);
+            optionBox.getChildren().add(smallImage);
+            
+            // Radio button
+            RadioButton radioButton = new RadioButton(objectNames[i]);
+            radioButton.setToggleGroup(toggleGroup);
+            radioButton.setUserData(i);
+            radioButton.setStyle("-fx-font-size: 11px;");
+            optionBox.getChildren().add(radioButton);
+            
+            selectionPanel.getChildren().add(optionBox);
+        }
+        
+        // Submit button
+        Button submitButton = new Button("Check Answer");
+        submitButton.setOnAction(e -> checkAnswer(primaryStage));
+        selectionPanel.getChildren().add(submitButton);
+        
+        // Result label
+        resultLabel = new Label("");
+        selectionPanel.getChildren().add(resultLabel);
+        
+        return selectionPanel;
+    }
+    private String getImagePathForObject(int index) {
+        String[] paths = {
+            "file:C:/Users/janaa/Downloads/Img/cup.png",
+            "file:C:/Users/janaa/Downloads/Img/mouse.png", 
+            "file:C:/Users/janaa/Downloads/Img/file.png",
+            "file:C:/Users/janaa/Downloads/Img/flowers.png",
+            "file:C:/Users/janaa/Downloads/Img/handcuffs.png",
+            "file:C:/Users/janaa/Downloads/Img/walkie_talkie.png",
+            "file:C:/Users/janaa/Downloads/Img/peaked_cap.png"
+        };
+        return paths[index];
+    }
+    
+    // Check if the selected answer is correct and show the hint accordingly
+    private void checkAnswer(Stage primaryStage) {
+        RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
+        
+        if (selectedRadioButton == null) {
+            resultLabel.setText("Please select an object!");
+            resultLabel.setTextFill(Color.RED);
+            return;
+        }
+        
+        int selectedIndex = (int) selectedRadioButton.getUserData();
+        int correctIndex = findMostRepeatedObjectIndex();
+        
+        if (selectedIndex == correctIndex) {
+            resultLabel.setText("✓ Correct! " + objectNames[correctIndex] + " appears " + 
+                              imageCounts[correctIndex] + " times.");
+            resultLabel.setTextFill(Color.GREEN);
+            
+            // After correct answer, show hint
+            showOutroScene(primaryStage);
+        } else {
+            resultLabel.setText("✗ Incorrect. Try again!");
+            resultLabel.setTextFill(Color.RED);
+            score++;
+        }
+    }
+    
+    // Find the index of the most repeated object
+    private int findMostRepeatedObjectIndex() {
+        int maxIndex = 0;
+        for (int i = 1; i < imageCounts.length; i++) {
+            if (imageCounts[i] > imageCounts[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    //make an object draggable
+    private void makeDraggable(ImageView imageView) {
+        final double[] dragDelta = new double[2];
+        
+        imageView.setOnMousePressed(event -> {
+            dragDelta[0] = event.getSceneX() - imageView.getLayoutX();
+            dragDelta[1] = event.getSceneY() - imageView.getLayoutY();
+            imageView.toFront();
+        });
+        
+        imageView.setOnMouseDragged(event -> {
+            double newX = event.getSceneX() - dragDelta[0];
+            double newY = event.getSceneY() - dragDelta[1];
+            
+            // Keep within bounds (adjusted for new size)
+            newX = Math.max(0, Math.min(newX, 1200 - imageView.getFitWidth()));
+            newY = Math.max(0, Math.min(newY, 600 - imageView.getFitHeight()));
+           
+            imageView.setLayoutX(newX);
+            imageView.setLayoutY(newY);
+        });
+        
+        imageView.setStyle("-fx-cursor: hand;");
+    }
+    
+    //to add images in specific pane , position with specific measurements
+    private void addImageAtPosition(Pane pane, String imagePath, double x, double y, double width, double height) {
+        try {
+            Image image = new Image(imagePath);
+            ImageView imageView = new ImageView(image);
+            imageView.setLayoutX(x);
+            imageView.setLayoutY(y);
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            imageView.setPreserveRatio(true);
+            pane.getChildren().add(imageView);
+            makeDraggable(imageView);
+        } catch (Exception e) {
+            System.out.println("Could not load image: " + imagePath);
+        }
+    }
+    
+    //to generate random unique number of times of appearing 
+    private void generateRandomCounts() {
+        Random random = new Random();
+        
+        for (int i = 0; i < 7; i++) {
+            boolean isUnique;
+            int newNum;
+            
+            do {
+                isUnique = true;
+                newNum = random.nextInt(20) + 5; // 5-15
+                
+                // Check if this number already exists in the array
+                for (int j = 0; j < i; j++) {
+                    if (imageCounts[j] == newNum) {
+                        isUnique = false;
+                        break;
+                    }
+                }
+            } while (!isUnique);
+            
+            imageCounts[i] = newNum;
+        }
+    }
+    
+    //to place the images in the game area according to its number of appearing 
+    private void createDistributedImages(Pane root) {
+        Random rand = new Random();
+        String[] paths = {
+            "file:C:/Users/janaa/Downloads/Img/cup.png",
+            "file:C:/Users/janaa/Downloads/Img/mouse.png",
+            "file:C:/Users/janaa/Downloads/Img/file.png",
+            "file:C:/Users/janaa/Downloads/Img/flowers.png",
+            "file:C:/Users/janaa/Downloads/Img/handcuffs.png",
+            "file:C:/Users/janaa/Downloads/Img/walkie_talkie.png",
+            "file:C:/Users/janaa/Downloads/Img/peaked_cap.png"
+        };
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < imageCounts[i]; j++) {
+            	
+                addImageAtPosition(root, paths[i], 
+                    (50 + rand.nextDouble() * 1250),
+                    (250 + rand.nextDouble() * 600), 
+                    60, 60);
+            }
+        }
+    } 
+}
