@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 public class ThirdRoom extends Application {
 	 private Button numSelected=null;
 	 private int score=0;
+	 private int error=0;
     public void start(Stage firstPage) {
     	firstPage.setTitle("Sudoku");
     	firstPage.setFullScreenExitHint("");
@@ -63,15 +64,15 @@ public class ThirdRoom extends Application {
     	
     	
     	final String[] puzzle = {
-	        "--74916-5",
-	        "2---6-3-9",
-	        "-----7-1-",
-	        "-586----4",
-	        "--3----9-",
-	        "--62--187",
-	        "9-4-7---2",
-	        "67-83----",
-	        "81--45---"
+    			"--74916-5",
+    	        "2---6-3-9",
+    	        "-----7-1-",
+    	        "-586----4",
+    	        "--3----9-",
+    	        "--62--187",
+    	        "9-4-7---2",
+    	        "67-83----",
+    	        "81--45---"
    		    };
    	final String[] solution = {
    		        "387491625",
@@ -90,12 +91,12 @@ public class ThirdRoom extends Application {
     
     	   Pane pane2=new Pane();
     	   
-    	   Label scoreText=new Label("Score: 0");
-    	   scoreText.setFont(Font.font("Arial",FontWeight.BOLD,20));
-    	   scoreText.setTextFill(Color.WHITE);
-    	   scoreText.setLayoutX(660);
-    	   scoreText.setLayoutY(20);
-    	   pane2.getChildren().add(scoreText);
+    	   Label errorText=new Label("Error: 0");
+    	   errorText.setFont(Font.font("Arial",FontWeight.BOLD,20));
+    	   errorText.setTextFill(Color.WHITE);
+    	   errorText.setLayoutX(660);
+    	   errorText.setLayoutY(20);
+    	   pane2.getChildren().add(errorText);
     	   
     	   
     	   GridPane grid=new GridPane();
@@ -143,9 +144,13 @@ public class ThirdRoom extends Application {
     	    					cell.setText(numSelectedText);
     	    					numSelected=null;
     	    					score++;
-    	    					scoreText.setText("Score= "+String.valueOf(score));
-    	    				}else numSeleceted=null;
-						  }
+    	    					
+    	    				}else {
+    	    					numSelected=null;
+    	    					error++;
+    	    					errorText.setText("Error= "+String.valueOf(error));
+    	    				}
+    						  }
     					  if(score==46) {
     						  Pane pane3=new Pane();
    						   
@@ -239,6 +244,4 @@ public class ThirdRoom extends Application {
 	}
 
 }
-
-
 
