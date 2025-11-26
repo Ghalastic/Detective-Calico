@@ -29,8 +29,8 @@ public class ThirdRoom extends Application {
     		);
     	
         ImageView cat = new ImageView("/images/walkingright2.png");
-    	cat.setFitWidth(300);
-    	cat.setFitHeight(500);
+    	cat.setFitWidth(250);
+    	cat.setFitHeight(400);
     	cat.setLayoutX(250);   
     	cat.setLayoutY(300);
     	background.getChildren().add(cat);
@@ -152,9 +152,16 @@ public class ThirdRoom extends Application {
     	    				}
     						  }
     					  if(score==46) {
-    						  Pane pane3=new Pane();
+    					  Pane background2=new Pane();
+    					    	background2.setStyle(
+    					    		    "-fx-background-image: url('/images/nextRoom.png'); " +
+    					    		    "-fx-background-size: cover;"
+    					    		);
+    					    	
+	  
+    					  Pane pane3=new Pane();
    						   
-   						   Label Hint3=new Label("\t      Great goob\n Hint3: ");
+   						   Label Hint3=new Label("\t      Great goob\n Hint3:\n\t      Errors= "+error);
    						   Hint3.setFont(Font.font("Centry gothic",FontWeight.BOLD,30));
    						   Hint3.setTextFill(Color.WHITE);
    						   Hint3.setLayoutX(500);
@@ -162,14 +169,14 @@ public class ThirdRoom extends Application {
    						   pane3.getChildren().add(Hint3);
    						   
    						   
-   						   Button Home=new Button("Home");
-   						   Home.setLayoutX(670);
-   					       Home.setLayoutY(460);
-   					       Home.setFont(new Font("Arail",15));
-   						   pane3.getChildren().add(Home);
+   						   Button next=new Button("Next Room");
+   						   next.setLayoutX(950);
+   						   next.setLayoutY(450);
+   						   next.setFont(new Font("Arail",15));
+   						   pane3.getChildren().add(next);
    						   
    						   StackPane root3 = new StackPane();
-   				           root3.getChildren().add(background);
+   				           root3.getChildren().add(background2);
    				           root3.getChildren().add(pane3);
    				           
    				           Scene scene3 = new Scene(root3, 800, 650);
@@ -244,4 +251,3 @@ public class ThirdRoom extends Application {
 	}
 
 }
-
