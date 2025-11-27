@@ -83,7 +83,7 @@ public class SecondRoom extends Application {
     
     @Override
     public void start(Stage stage) throws FileNotFoundException {
-        stage.setTitle("Second Room: Match Cards Game");
+        stage.setTitle("Detective Calico Match Cards Game (Animals)");
         stage.setFullScreenExitHint("");
         stage.setFullScreen(true);
 
@@ -255,75 +255,77 @@ public class SecondRoom extends Application {
     
     // New method to show the next room screen
     private void showNextRoom(Stage stage) {
-        gameCompleted = true;
+    	gameCompleted = true;
+    	try {
+    	    Image nextRoomBg = new Image(new FileInputStream("img/nextRoom.png"));
 
-        try {
-            Image nextRoomBg = new Image(new FileInputStream("img/nextRoom.png"));
+    	    double screenWidth  = Screen.getPrimary().getVisualBounds().getWidth();
+    	    double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 
-            double screenWidth  = Screen.getPrimary().getVisualBounds().getWidth();
-            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+    	    ImageView nextRoomBgView = new ImageView(nextRoomBg);
+    	    nextRoomBgView.setFitWidth(screenWidth);
+    	    nextRoomBgView.setFitHeight(screenHeight);
+    	    nextRoomBgView.setPreserveRatio(false);
 
-            ImageView nextRoomBgView = new ImageView(nextRoomBg);
-            nextRoomBgView.setFitWidth(screenWidth);
-            nextRoomBgView.setFitHeight(screenHeight);
-            nextRoomBgView.setPreserveRatio(false);
+    	    // Root layout: StackPane for centering + Pane overlay for absolute button
+    	    StackPane rootStack = new StackPane();
+    	    rootStack.getChildren().add(nextRoomBgView);
 
-            // ----- ROOT: Pane for absolute positioning -----
-            Pane rootPane = new Pane();
-            rootPane.getChildren().add(nextRoomBgView);
+    	    // Centered VBox with labels
+    	    VBox centerContent = new VBox(20);
+    	    centerContent.setAlignment(Pos.CENTER);
+    	    centerContent.setStyle("-fx-background-color: transparent;");
 
-            // ----- Center text (same as before, just positioned in Pane) -----
-            VBox centerContent = new VBox(20);
-            centerContent.setAlignment(Pos.CENTER);
-            centerContent.setStyle("-fx-background-color: transparent;");
+    	    Label greatJobLabel = new Label("Great job");
+    	    greatJobLabel.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-            Label greatJobLabel = new Label("Great job");
-            greatJobLabel.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white;");
+    	    Label hintLabel = new Label("Hint 2: A faint smell of sea salt was found on the glass case where the map was stored.");
+    	    hintLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+    	    hintLabel.setWrapText(true);
+    	    hintLabel.setMaxWidth(screenWidth * 0.6); // avoid going off screen
 
-            Label hintLabel = new Label("Hint 2: ");
-            hintLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+    	    Label errorsLabel = new Label("Number of Errors: " + errorCount);
+    	    errorsLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
 
-            Label errorsLabel = new Label("Number of Errors: " + errorCount);
-            errorsLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+    	    centerContent.getChildren().addAll(greatJobLabel, hintLabel, errorsLabel);
 
-            centerContent.getChildren().addAll(greatJobLabel, hintLabel, errorsLabel);
+    	    // Let StackPane keep this VBox perfectly centered
+    	    rootStack.getChildren().add(centerContent);
+    	    StackPane.setAlignment(centerContent, Pos.CENTER);
 
-            // put the center text in the middle of the screen
-            centerContent.setLayoutX(screenWidth / 2 - 150);   // adjust 150 to center nicely
-            centerContent.setLayoutY(screenHeight / 2 - 100);  // adjust 100 as needed
+    	    // Pane overlay for the button at a fixed position
+    	    Pane overlayPane = new Pane();
+    	    overlayPane.setPickOnBounds(false); // allow clicks to pass through empty areas
 
-            rootPane.getChildren().add(centerContent);
+    	    Button nextRoomButton = new Button("Next Room");
+    	    nextRoomButton.setStyle(
+    	            "-fx-font-size: 18px; -fx-padding: 8px 16px; " +
+    	            "-fx-background-color: white; -fx-text-fill: black;"
+    	    );
+    	    nextRoomButton.setOnAction(e -> stage.close());
 
-            // ----- Next Room button -----
-            Button nextRoomButton = new Button("Next Room");
-            nextRoomButton.setStyle(
-                    "-fx-font-size: 18px; -fx-padding: 8px 16px; " +
-                    "-fx-background-color: white; -fx-text-fill: black;"
-            );
-            nextRoomButton.setOnAction(e -> stage.close());
+    	    double doorButtonX = 1060; // adjust as needed
+    	    double doorButtonY = 450;
+    	    nextRoomButton.setLayoutX(doorButtonX);
+    	    nextRoomButton.setLayoutY(doorButtonY);
 
-            // ABSOLUTE POSITION ON THE DOOR:
-            // >>> adjust these two numbers until the button is exactly where you drew it <<<
-            double doorButtonX = 1060;  // example values – tweak while running
-            double doorButtonY = 450;
+    	    overlayPane.getChildren().add(nextRoomButton);
 
-            nextRoomButton.setLayoutX(doorButtonX);
-            nextRoomButton.setLayoutY(doorButtonY);
+    	    // Put overlay on top
+    	    rootStack.getChildren().add(overlayPane);
 
-            rootPane.getChildren().add(nextRoomButton);
+    	    Scene nextRoomScene = new Scene(rootStack, screenWidth, screenHeight);
+    	    nextRoomScene.setOnKeyPressed(e -> {
+    	        if ("ESCAPE".equals(e.getCode().toString())) stage.close();
+    	    });
 
-            Scene nextRoomScene = new Scene(rootPane, screenWidth, screenHeight);
-            nextRoomScene.setOnKeyPressed(e -> {
-                if ("ESCAPE".equals(e.getCode().toString())) stage.close();
-            });
+    	    stage.setScene(nextRoomScene);
 
-            stage.setScene(nextRoomScene);
-
-        } catch (FileNotFoundException e) {
-            System.out.println("Next room background image not found: img/nextRoom.png");
-            e.printStackTrace();
-        }
-    }
+    	} catch (FileNotFoundException e) {
+    	    System.out.println("Next room background image not found: img/nextRoom.png");
+    	    e.printStackTrace();
+    	}
+    	}
 
         
     void setupCards() {
