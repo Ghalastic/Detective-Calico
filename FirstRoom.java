@@ -62,7 +62,7 @@ public class FirstRoom extends Application {
         addImageAtPosition(pane, "file:C:/Users/janaa/Downloads/Img/calicobacks'.png", 250, 400, 250, 400);
         
         Label title = new Label("Welcome to the First Room");
-        title.setLayoutX(400);
+        title.setLayoutX(450);
         title.setLayoutY(80);
         title.setFont(Font.font("Century Gothic", FontWeight.BOLD, 30));
         title.setTextFill(Color.WHITE);
@@ -87,6 +87,7 @@ public class FirstRoom extends Application {
         startButton.setOnAction(e -> {
             // STAGE 2: GAME SCENE
             showGameScene(primaryStage);
+            
         });
         
         StackPane root = new StackPane();
@@ -110,8 +111,8 @@ public class FirstRoom extends Application {
         timerLabel = new Label("Time: 0s");
         errorslbl.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
         timerLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
-        topPanel.getChildren().addAll(timerLabel,errorslbl);
-        
+        topPanel.getChildren().addAll(timerLabel,errorslbl,Controllers.createControlButtons());
+      
         
         // Set background for top panel to make timer visible
         topPanel.setStyle("-fx-background-color: rgba(0,0,0,0.5);");
@@ -155,8 +156,7 @@ public class FirstRoom extends Application {
         Label hint = new Label("Congratulations! You found the most common object!\n\n" +
                               "Hint 1: The thief knew exactly how to disable the camera "
                               + "\nfor 10 seconds without triggering the system alert.\r\n"
-                              + "\nErrors:" + errors
-                              +"\nTotal Time: "+ secondsElapsed);
+                              + "\nErrors:" + errors);
         
         hint.setLayoutX(350);
         hint.setLayoutY(200);
