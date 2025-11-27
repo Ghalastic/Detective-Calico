@@ -20,6 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 
 public class FirstRoom extends Application {
     
@@ -28,7 +31,13 @@ public class FirstRoom extends Application {
     private String[] objectNames = {"Cup", "Mouse", "File", "Flowers", "Handcuffs", "Walkie Talkie", "Peaked Cap"};
     private ToggleGroup toggleGroup;
     private Label resultLabel;
-    private int score;
+    private int errors;
+    private Label errorslbl = new Label("    Errors :"+errors);
+    
+ // Elapsed time timer variables 
+    private Label timerLabel;
+    private int secondsElapsed = 0;
+    private Timeline timeline;
  
 
     @Override
@@ -93,6 +102,21 @@ public class FirstRoom extends Application {
     	// BorderPane is used to separate game area and selection panel
         BorderPane mainLayout = new BorderPane();
         
+    // Add Elapsed Time Timer at top
+        HBox topPanel = new HBox();
+        topPanel.setPadding(new Insets(10));
+        topPanel.setAlignment(Pos.CENTER_LEFT);
+        
+        timerLabel = new Label("Time: 0s");
+        errorslbl.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
+        timerLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
+        topPanel.getChildren().addAll(timerLabel,errorslbl);
+        
+        
+        // Set background for top panel to make timer visible
+        topPanel.setStyle("-fx-background-color: rgba(0,0,0,0.5);");
+        mainLayout.setTop(topPanel);
+        
         // setting the game area in the center of the main layout
         Pane gameArea = createGameArea();
         mainLayout.setCenter(gameArea);
@@ -101,9 +125,11 @@ public class FirstRoom extends Application {
         HBox selectionPanel = createSelectionPanel(primaryStage);
         mainLayout.setBottom(selectionPanel);
         
+        // START THE TIMER
+        startTimer();
+        
         // Create game scene
         Scene gameScene = new Scene(mainLayout, 1100, 650);
-        
         primaryStage.setScene(gameScene);
         primaryStage.setFullScreen(true); // Set full screen after setting scene
         primaryStage.show();
@@ -116,7 +142,7 @@ public class FirstRoom extends Application {
     }
 
     // STAGE 3: OUTRO SCENE - Hint Display if Winning
-    private void showOutroScene(Stage primaryStage) {
+    private void showOutroScene(Stage primaryStage,int finalTime) {
         Pane background = new Pane();
         background.setStyle(
             "-fx-background-image: url('file:C:/Users/janaa/Downloads/Img/outroImg.jpg'); " +
@@ -124,9 +150,13 @@ public class FirstRoom extends Application {
         );
 
         Pane pane = new Pane();
-        
+        //add pause and menu bottons
+        pane.getChildren().addAll(Controllers.createControlButtons());
         Label hint = new Label("Congratulations! You found the most common object!\n\n" +
-                              "Hint 1: ");
+                              "Hint 1: The thief knew exactly how to disable the camera "
+                              + "\nfor 10 seconds without triggering the system alert.\r\n"
+                              + "\nErrors:" + errors
+                              +"\nTotal Time: "+ secondsElapsed);
         
         hint.setLayoutX(350);
         hint.setLayoutY(200);
@@ -165,8 +195,6 @@ public class FirstRoom extends Application {
         imageView1.setFitWidth(1300);
         imageView1.setFitHeight(650);
         imageView1.setPreserveRatio(false);
-      
-  System.out.print(false);
        
         // Create layout
         Pane root = new Pane();
@@ -255,13 +283,18 @@ public class FirstRoom extends Application {
             resultLabel.setText("✓ Correct! " + objectNames[correctIndex] + " appears " + 
                               imageCounts[correctIndex] + " times.");
             resultLabel.setTextFill(Color.GREEN);
+            // Stop timer to get the final time
+            stopTimer();
+            int finalTime = secondsElapsed;
             
             // After correct answer, show hint
-            showOutroScene(primaryStage);
+            showOutroScene(primaryStage,finalTime);
+           
         } else {
             resultLabel.setText("✗ Incorrect. Try again!");
             resultLabel.setTextFill(Color.RED);
-            score++;
+            errors++;
+            errorslbl.setText("    Errors :"+errors);
         }
     }
     
@@ -365,4 +398,22 @@ public class FirstRoom extends Application {
             }
         }
     } 
+ // Elapsed time timer methods 
+    private void startTimer() {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer())
+        );
+        timeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    private void updateTimer() {
+        secondsElapsed++;
+        timerLabel.setText("Time: " + secondsElapsed + "s");
+    }
+
+    private void stopTimer() {
+        if (timeline != null) {
+            timeline.stop();
+        }
+    }
 }
