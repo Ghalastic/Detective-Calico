@@ -9,10 +9,10 @@ import javafx.scene.layout.*;
 
 public class Controllers {
     
-    public static VBox createControlButtons() {
-        VBox controls = new VBox(10);
+    public static HBox createControlButtons() {
+        HBox controls = new HBox(10);
         controls.setPadding(new Insets(10));
-        controls.setAlignment(Pos.CENTER_LEFT);
+        controls.setAlignment(Pos.CENTER_RIGHT);
         
         Button pauseBtn = new Button("⏸ Pause");
         Button menuBtn = new Button("🏠 Menu");
