@@ -19,7 +19,6 @@ import javafx.util.Duration;
 import javafx.scene.image.ImageView;
 
 public class ThirdRoom extends Application {
-
 	 private Button numSelected=null;
 	 private int score=0;
 	 private int error=0;
@@ -65,6 +64,7 @@ public void setPage3(Stage winPage) {
   		    "-fx-background-size: cover;"
   	  	     );
 		       Pane pane3=new Pane();
+		       pane3.getChildren().add(Controllers.createControlButtons());
 			   
 			   Label Hint3=new Label("\t\t\t        Great goob\n\n  Hint3:The thief removed the map carefully,\n     suggesting someone who has handled\n       fragile historical documents before.\n\t\t\t          Errors= "+error);
 			   Hint3.setFont(Font.font("Centry gothic",FontWeight.BOLD,30));
@@ -79,6 +79,8 @@ public void setPage3(Stage winPage) {
 			   next.setLayoutY(450);
 			   next.setFont(new Font("Arail",15));
 			   pane3.getChildren().add(next);
+			   
+			   
 			   
 			   StackPane root3 = new StackPane();
 	           root3.getChildren().add(background2);
@@ -100,6 +102,7 @@ public void setPage2(Stage mainGame) {
 	    "-fx-background-size: cover;"
 	);
 	   Pane pane2=new Pane();
+	   pane2.getChildren().add(Controllers.createControlButtons());
 	   
 	   Label dataText=new Label("Errors:  "+String.valueOf(error)+"  Score:  "+String.valueOf(score)+"  Time: 0s ");
 	   timer(dataText);
@@ -163,7 +166,7 @@ public void setPage2(Stage mainGame) {
 	    					dataText.setText("Errors:  "+String.valueOf(error)+"  Score:  "+String.valueOf(score)+"  Time: 0s ");
 	    				}
 						  }
-					  if(score==46) {
+					  if(score==5) {
 						  setPage3(mainGame);
 						  timeline.stop();
 					  }	});
@@ -222,6 +225,7 @@ public void setPage1(Stage firstPage) {
 	
 
 	Pane pane=new Pane();
+	pane.getChildren().add(Controllers.createControlButtons());
 	
 	Label title=new Label("Welcome to the third room");
 	title.setLayoutX(500);
@@ -274,4 +278,3 @@ public void timer(Label dataText) {
 	}
 
 }
-
