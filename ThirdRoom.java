@@ -163,7 +163,7 @@ public void setPage2(Stage mainGame) {
 	    					dataText.setText("Errors:  "+String.valueOf(error)+"  Score:  "+String.valueOf(score)+"  Time: 0s ");
 	    				}
 						  }
-					  if(score==5) {
+					  if(score==46) {
 						  setPage3(mainGame);
 						  timeline.stop();
 					  }	});
@@ -274,3 +274,4 @@ public void timer(Label dataText) {
 	}
 
 }
+
