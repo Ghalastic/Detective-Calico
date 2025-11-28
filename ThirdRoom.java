@@ -96,11 +96,18 @@ public void setPage3(Stage winPage) {
 	
 
 public void setPage2(Stage mainGame) {
-	Pane background = new Pane();
-	background.setStyle(
+	   Pane background = new Pane();
+	   background.setStyle(
 	    "-fx-background-image: url('/images/thirdroom.png'); " +
 	    "-fx-background-size: cover;"
-	);
+	   );
+	   ImageView cat = new ImageView("/images/walkingright2.png");
+	   cat.setFitWidth(250);
+	   cat.setFitHeight(400);
+	   cat.setLayoutX(250);   
+	   cat.setLayoutY(300);
+	   background.getChildren().add(cat);
+	   
 	   Pane pane2=new Pane();
 	   pane2.getChildren().add(Controllers.createControlButtons());
 	   
@@ -110,7 +117,7 @@ public void setPage2(Stage mainGame) {
 	   dataText.setTextFill(Color.WHITE);
 	   dataText.setLayoutX(560);
 	   dataText.setLayoutY(20);
-	   pane2.getChildren().add(dataText);
+	   pane2.getChildren().addAll(dataText);
 	   
 	   
 	   GridPane grid=new GridPane();
@@ -166,7 +173,7 @@ public void setPage2(Stage mainGame) {
 	    					dataText.setText("Errors:  "+String.valueOf(error)+"  Score:  "+String.valueOf(score)+"  Time: 0s ");
 	    				}
 						  }
-					  if(score==5) {
+					  if(score==46) {
 						  setPage3(mainGame);
 						  timeline.stop();
 					  }	});
@@ -176,7 +183,7 @@ public void setPage2(Stage mainGame) {
  	   grid.setVgap(0.5);
  	   grid.setHgap(0.5);
  	   grid.setLayoutX(460);
-		   grid.setLayoutY(60);
+	   grid.setLayoutY(60);
  	   pane2.getChildren().add(grid);
  	   
  	   
