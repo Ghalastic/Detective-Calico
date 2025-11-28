@@ -12,7 +12,7 @@ public class Controllers {
     public static HBox createControlButtons() {
         HBox controls = new HBox(10);
         controls.setPadding(new Insets(10));
-        controls.setAlignment(Pos.CENTER_RIGHT);
+        controls.setAlignment(Pos.CENTER_LEFT);
         
         Button pauseBtn = new Button("⏸ Pause");
         Button menuBtn = new Button("🏠 Menu");
@@ -59,3 +59,4 @@ public class Controllers {
         }
     }
 }
+
