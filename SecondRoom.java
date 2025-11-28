@@ -4,7 +4,9 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -83,7 +85,7 @@ public class SecondRoom extends Application {
     
     @Override
     public void start(Stage stage) throws FileNotFoundException {
-        stage.setTitle("Detective Calico Match Cards Game (Animals)");
+        stage.setTitle("Second Room: Match the Cards");
         stage.setFullScreenExitHint("");
         stage.setFullScreen(true);
 
@@ -119,7 +121,7 @@ public class SecondRoom extends Application {
                 "In this room, you must solve a card-matching puzzle. You will see a grid of facedown cards, each hiding an animal.\n" +
                 "To play: click any two cards to flip them over. If they match, they stay revealed. If not, they flip back over, and you must remember their positions.\n" +
                 "Your score increases each time you correctly match a pair. The error count goes up whenever you flip two cards that do not match.\n" +
-                "Try to find all matching pairs with the fewest errors possible. The fun challenge is to test your memory and improve your score!"
+                "Try to find all matching pairs with the fewest errors possible."
         );
         description.setStyle("-fx-font-size: 20px; -fx-text-fill: white; -fx-text-alignment: center;");
         description.setWrapText(true);
@@ -145,10 +147,26 @@ public class SecondRoom extends Application {
         scoreLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: white; -fx-background-color: rgba(0,0,0,0.6); -fx-padding: 5; -fx-background-radius: 10;");
         timerLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: white; -fx-background-color: rgba(0,0,0,0.6); -fx-padding: 5; -fx-background-radius: 10;");
 
-        HBox topPane = new HBox(40, errorLabel, scoreLabel, timerLabel);
-        topPane.setAlignment(Pos.CENTER);
+        // Updated: Control buttons on left, labels perfectly centered in middle
+        HBox topPane = new HBox();
         topPane.setPrefHeight(40);
         topPane.setStyle("-fx-background-color: rgba(0,0,0,1); -fx-padding: 10;");
+        topPane.getChildren().add(Controllers.createControlButtons());
+        
+        Region leftSpacer = new Region();
+        HBox.setHgrow(leftSpacer, Priority.ALWAYS);
+        
+        HBox labelsBox = new HBox(40, errorLabel, scoreLabel, timerLabel);
+        labelsBox.setAlignment(Pos.CENTER);
+
+        // move the whole group a bit left
+        HBox.setMargin(labelsBox, new Insets(0, 0, 0, -180)); // tweak -120 to taste
+
+        
+        Region rightSpacer = new Region();
+        HBox.setHgrow(rightSpacer, Priority.ALWAYS);
+        
+        topPane.getChildren().addAll(leftSpacer, labelsBox, rightSpacer);
         root.setTop(topPane);
 
         // --- Board setup ---
@@ -253,79 +271,139 @@ public class SecondRoom extends Application {
         stage.show();
     }
     
-    // New method to show the next room screen
+ // New method to show the next room screen
     private void showNextRoom(Stage stage) {
-    	gameCompleted = true;
-    	try {
-    	    Image nextRoomBg = new Image(new FileInputStream("img/nextRoom.png"));
+        gameCompleted = true;
+        try {
+            Image nextRoomBg = new Image(new FileInputStream("img/nextRoom.png"));
 
-    	    double screenWidth  = Screen.getPrimary().getVisualBounds().getWidth();
-    	    double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+            double screenWidth  = Screen.getPrimary().getVisualBounds().getWidth();
+            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 
-    	    ImageView nextRoomBgView = new ImageView(nextRoomBg);
-    	    nextRoomBgView.setFitWidth(screenWidth);
-    	    nextRoomBgView.setFitHeight(screenHeight);
-    	    nextRoomBgView.setPreserveRatio(false);
+            ImageView nextRoomBgView = new ImageView(nextRoomBg);
+            nextRoomBgView.setFitWidth(screenWidth);
+            nextRoomBgView.setFitHeight(screenHeight);
+            nextRoomBgView.setPreserveRatio(false);
 
-    	    // Root layout: StackPane for centering + Pane overlay for absolute button
-    	    StackPane rootStack = new StackPane();
-    	    rootStack.getChildren().add(nextRoomBgView);
+            // Updated: Use StackPane for overlay control, position controls inside background
+            StackPane rootStack = new StackPane();
+            rootStack.getChildren().add(nextRoomBgView);
 
-    	    // Centered VBox with labels
-    	    VBox centerContent = new VBox(20);
-    	    centerContent.setAlignment(Pos.CENTER);
-    	    centerContent.setStyle("-fx-background-color: transparent;");
+            // Top controls at top-left, with margin to stay inside background
+            HBox topControls = Controllers.createControlButtons();
 
-    	    Label greatJobLabel = new Label("Great job");
-    	    greatJobLabel.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white;");
+            // remove any extra padding if you want them very close to the corner
+            topControls.setPadding(new Insets(0));   // <-- important
+            topControls.setAlignment(Pos.TOP_LEFT);
 
-    	    Label hintLabel = new Label("Hint 2: A faint smell of sea salt was found on the glass case where the map was stored.");
-    	    hintLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
-    	    hintLabel.setWrapText(true);
-    	    hintLabel.setMaxWidth(screenWidth * 0.6); // avoid going off screen
+            // make the StackPane put this HBox in the top-left
+            StackPane.setAlignment(topControls, Pos.TOP_LEFT);
+            StackPane.setMargin(topControls, new Insets(10, 0, 0, 10)); // distance from edges
 
-    	    Label errorsLabel = new Label("Number of Errors: " + errorCount);
-    	    errorsLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+            // Ensure buttons work in the outro scene
+            Button pauseBtn = (Button) topControls.getChildren().get(0);
+            Button menuBtn = (Button) topControls.getChildren().get(1);
+            // Temporary: Add background to make buttons visible for testing
+            pauseBtn.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-padding: 8 15;");
+            menuBtn.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-padding: 8 15;");
+            pauseBtn.setOnAction(e -> {
+                System.out.println("Pause button clicked!"); // Debug print
+                Alert pauseAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                pauseAlert.setTitle("Game Paused");
+                pauseAlert.setHeaderText("What would you like to do?");
+                ButtonType resume = new ButtonType("Resume");
+                ButtonType menu = new ButtonType("Main Menu");
+                pauseAlert.getButtonTypes().setAll(resume, menu);
+                pauseAlert.showAndWait().ifPresent(buttonType -> {
+                    if (buttonType == menu) {
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirm.setTitle("Leave Game");
+                        confirm.setHeaderText("Return to main menu?");
+                        confirm.setContentText("Your progress will be lost.");
+                        if (confirm.showAndWait().get() == ButtonType.OK) {
+                            // Add your menu navigation logic here
+                            System.out.println("Going to main menu...");
+                        }
+                    }
+                });
+            });
+            menuBtn.setOnAction(e -> {
+                System.out.println("Menu button clicked!"); // Debug print
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("Leave Game");
+                confirm.setHeaderText("Return to main menu?");
+                confirm.setContentText("Your progress will be lost.");
+                if (confirm.showAndWait().get() == ButtonType.OK) {
+                    // Add your menu navigation logic here
+                    System.out.println("Going to main menu...");
+                }
+            });
 
-    	    centerContent.getChildren().addAll(greatJobLabel, hintLabel, errorsLabel);
+            // Centered VBox with labels
+            VBox centerContent = new VBox(20);
+            centerContent.setAlignment(Pos.CENTER);
+            centerContent.setStyle("-fx-background-color: transparent;");
 
-    	    // Let StackPane keep this VBox perfectly centered
-    	    rootStack.getChildren().add(centerContent);
-    	    StackPane.setAlignment(centerContent, Pos.CENTER);
+            Label greatJobLabel = new Label("Great job");
+            greatJobLabel.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-    	    // Pane overlay for the button at a fixed position
-    	    Pane overlayPane = new Pane();
-    	    overlayPane.setPickOnBounds(false); // allow clicks to pass through empty areas
+            Label hintLabel = new Label("Hint 2: A faint smell of sea salt was found on the glass case where the map was stored.");
+            hintLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+            hintLabel.setWrapText(true);
+            hintLabel.setMaxWidth(screenWidth * 0.6); // avoid going off screen
 
-    	    Button nextRoomButton = new Button("Next Room");
-    	    nextRoomButton.setStyle(
-    	            "-fx-font-size: 18px; -fx-padding: 8px 16px; " +
-    	            "-fx-background-color: white; -fx-text-fill: black;"
-    	    );
-    	    nextRoomButton.setOnAction(e -> stage.close());
+            Label errorsLabel = new Label("Number of Errors: " + errorCount);
+            errorsLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
 
-    	    double doorButtonX = 1060; // adjust as needed
-    	    double doorButtonY = 450;
-    	    nextRoomButton.setLayoutX(doorButtonX);
-    	    nextRoomButton.setLayoutY(doorButtonY);
+            centerContent.getChildren().addAll(greatJobLabel, hintLabel, errorsLabel);
 
-    	    overlayPane.getChildren().add(nextRoomButton);
+            // Let StackPane keep this VBox perfectly centered
+            rootStack.getChildren().add(centerContent);
+            StackPane.setAlignment(centerContent, Pos.CENTER);
 
-    	    // Put overlay on top
-    	    rootStack.getChildren().add(overlayPane);
+            // Pane overlay for the button at a fixed position (original place)
+            Pane overlayPane = new Pane();
+            overlayPane.setPickOnBounds(false); // allow clicks to pass through empty areas
 
-    	    Scene nextRoomScene = new Scene(rootStack, screenWidth, screenHeight);
-    	    nextRoomScene.setOnKeyPressed(e -> {
-    	        if ("ESCAPE".equals(e.getCode().toString())) stage.close();
-    	    });
+            Button nextRoomButton = new Button("Next Room");
+            nextRoomButton.setStyle(
+                    "-fx-font-size: 18px; -fx-padding: 8px 16px; " +
+                    "-fx-background-color: white; -fx-text-fill: black;"
+            );
+            nextRoomButton.setOnAction(e -> {
+                System.out.println("Next Room button clicked!"); // Debug print
+                stage.close();
+            });
+            // Temporary: Make button visible for testing (remove after confirming it works)
+            nextRoomButton.setStyle(
+                    "-fx-font-size: 18px; -fx-padding: 8px 16px; " +
+                    "-fx-background-color: white; -fx-text-fill: black;" // Changed to red for visibility
+            );
+            double doorButtonX = 1060; // adjust as needed
+            double doorButtonY = 450;
+            nextRoomButton.setLayoutX(doorButtonX);
+            nextRoomButton.setLayoutY(doorButtonY);
 
-    	    stage.setScene(nextRoomScene);
+            overlayPane.getChildren().add(nextRoomButton);
 
-    	} catch (FileNotFoundException e) {
-    	    System.out.println("Next room background image not found: img/nextRoom.png");
-    	    e.printStackTrace();
-    	}
-    	}
+            // Put overlay on top
+            rootStack.getChildren().add(overlayPane);
+
+            // Add topControls LAST to ensure it's on top and clickable
+            rootStack.getChildren().add(topControls);
+
+            Scene nextRoomScene = new Scene(rootStack, screenWidth, screenHeight);
+            nextRoomScene.setOnKeyPressed(e -> {
+                if ("ESCAPE".equals(e.getCode().toString())) stage.close();
+            });
+
+            stage.setScene(nextRoomScene);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Next room background image not found: img/nextRoom.png");
+            e.printStackTrace();
+        }
+    }
 
         
     void setupCards() {
