@@ -1,6 +1,4 @@
-package detectiveCalico;
-
-import java.util.Timer;
+package application;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -22,7 +20,7 @@ import javafx.scene.image.ImageView;
 public class ThirdRoom extends Application {
     private Button numSelected = null;
     private int score = 0;
-    private int error = 0;
+    private static int error = 0;
     private int seconds = 0;
     private Timeline timeline;
 
@@ -296,6 +294,9 @@ public class ThirdRoom extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+    public static int geterrors() {
+    	return error;
     }
 
 }
