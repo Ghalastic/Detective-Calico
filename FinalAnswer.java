@@ -1,4 +1,8 @@
-package detectiveCalico;
+package application;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -18,8 +22,18 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class FinalAnswer extends Application {
-	
+	int error1 = FirstRoom.geterrors();
+	int error2 = SecondRoom.geterrors();
+	int error3 = ThirdRoom.geterrors();
+
     public void start(Stage stage) {
+        
+    	//Save the errors for the scoreboard
+    	try (PrintWriter writer = new PrintWriter(new FileWriter("scores.txt", true))) {
+    		writer.printf("%d,%d,%d%n", error1, error2, error3);
+    	} catch (IOException e1) { e1.printStackTrace(); }
+    	
+    	
         stage.setTitle("Detective calico");
         stage.setFullScreenExitHint("");
         stage.setFullScreen(true);
@@ -39,7 +53,7 @@ public class FinalAnswer extends Application {
    	    
         Pane pane = new Pane();
 
-        // ✅ Top-right Pause/Menu controls (using Controllers with stage)
+        // ✅ Top-right Pause/Menu controls 
         HBox controls = Controllers.createControlButtons(stage);
         controls.setAlignment(Pos.TOP_RIGHT);
         controls.setPadding(new Insets(10));
@@ -85,18 +99,22 @@ public class FinalAnswer extends Application {
         submit.setOnAction(e -> {
             RadioButton selected = (RadioButton) group.getSelectedToggle();
             if (selected != null) {
+            	
                 if (selected.getText().equalsIgnoreCase("Historian")) {
                     result.setText("Correct! The culprit is the Historian.");
                     result.setTextFill(Color.GREEN);
                     result.setLayoutX(400);
                     result.setLayoutY(650);
+                    //go to menu automatically
+                    Controllers.goToMenu(stage);
                 } else {
                     result.setText("Wrong! Try again.");
                     result.setTextFill(Color.RED);
                     result.setLayoutX(550);
                     result.setLayoutY(650);
-                }
+                }    
             }
+            
         });
 	  
         row.getChildren().addAll(sailor, historian, security);
@@ -106,7 +124,7 @@ public class FinalAnswer extends Application {
         root.getChildren().add(background);
         root.getChildren().add(pane);
      
-        // Use full screen size here so the background scales nicely
+        // Using full screen size here so the background scales nicely
         Scene scene = new Scene(root, screenWidth, screenHeight);
         stage.setScene(scene);
         stage.show();
@@ -116,4 +134,3 @@ public class FinalAnswer extends Application {
         launch(args);
     }
 }
-
