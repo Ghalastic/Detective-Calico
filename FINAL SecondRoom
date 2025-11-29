@@ -1,4 +1,5 @@
-package detectiveCalico;
+package application;
+
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -29,7 +30,7 @@ public class SecondRoom extends Application {
     ImageView catView;
     Image catFront;
     Image catBack;
-    int errorCount = 0;
+    static int errorCount = 0;
     int score = 0;
     int timeElapsed = 0;
     Timeline timer;
@@ -265,7 +266,7 @@ public class SecondRoom extends Application {
         stage.show();
     }
 
-    // 🔥 SIMPLIFIED OUTRO SCREEN THAT DEFINITELY CALLS THIRDROOM
+    // OUTRO SCREEN THAT CALLS THIRDROOM
     private void showNextRoom(Stage stage) {
         gameCompleted = true;
         try {
@@ -468,5 +469,8 @@ public class SecondRoom extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+    public static int geterrors() {
+    	return errorCount;
     }
 }
