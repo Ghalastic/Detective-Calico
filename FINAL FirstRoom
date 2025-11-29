@@ -171,8 +171,7 @@ public class FirstRoom extends Application {
         pane.getChildren().add(NextRoomButton);
         
         NextRoomButton.setOnAction(e -> {
-            // Could go back to main menu or restart
-            showIntroScene(primaryStage);
+            Controllers.goToSecondRoom(primaryStage);
         });
         
         StackPane root = new StackPane();
