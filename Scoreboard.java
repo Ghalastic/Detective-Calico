@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import java.io.*;
@@ -87,8 +88,9 @@ public class Scoreboard extends Application {
 
         Image bg = new Image("file:background/ScoreBoard.png");
         ImageView background = new ImageView(bg);
-        background.setFitHeight(600);
-        background.setFitWidth(450);
+        background.setFitHeight(720);
+        background.setFitWidth(1300);
+        
 
         Button back = new Button("←");
         back.setLayoutX(15);
@@ -103,20 +105,19 @@ public class Scoreboard extends Application {
 
         int i = 0;
         for (PlayerResult r : results) {
-            String text = String.format("%-10d  %-15s  %s",
+            String text = String.format("%-18d  %-23s  %s",
                     r.attempt, r.name, r.tier);
             Label row = new Label(text);
-            row.setFont(Font.font("Consolas", 16));
-            row.setLayoutX(100);
-            row.setLayoutY(110 + i * 25); // vertical spacing
+            row.setFont(Font.font("Consolas",FontWeight.BOLD, 30));
+            row.setLayoutX(300);
+            row.setLayoutY(150 + i * 50); // vertical spacing
             pane.getChildren().add(row);
             i++;
         }
 
         Scene scene = new Scene(pane);
         stage.setTitle("ScoreBoard");
-        stage.setWidth(background.getFitWidth());
-        stage.setHeight(background.getFitHeight());
+        stage.setFullScreen(true); 
         stage.setScene(scene);
         stage.show();
     }
